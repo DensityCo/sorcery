@@ -259,7 +259,7 @@ function getMapFromUrl ( url, base, sync ) {
 	if ( /webpack:\//.test( url ) ) {
 		url = url.replace('webpack:/', '');
 	}
-	if ( !/app\.js(\.map)?$/.test( url ) ) {
+	if ( !/app\.js(\.map)?$/.test( url ) && url.indexOf('node_modules') < 0 ) {
 		url = url.replace('dist/', 'tmp/');
 	}
 
