@@ -255,7 +255,7 @@ function getMapFromUrl ( url, base, sync ) {
 	if ( /webpack:\//.test( url ) ) {
 		url = url.replace('webpack:/', '');
 	}
-	if ( !/app.js$/.test( url ) ) {
+	if ( !/app\.js(\.map)?$/.test( url ) ) {
 		url = url.replace('dist/', 'tmp/');
 	}
 
