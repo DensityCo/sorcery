@@ -28,7 +28,6 @@ export default function Node ({ file, content }) {
 
 Node.prototype = {
 	load ( sourcesContentByPath, sourceMapByPath ) {
-		if ( !this.file ) return null;
 		return getContent( this, sourcesContentByPath ).then( content => {
 			this.content = sourcesContentByPath[ this.file ] = content;
 
@@ -60,7 +59,6 @@ Node.prototype = {
 	},
 
 	loadSync ( sourcesContentByPath, sourceMapByPath ) {
-		if ( !this.file ) { return null; }
 		if ( !this.content ) {
 			if ( !sourcesContentByPath[ this.file ] ) {
 				sourcesContentByPath[ this.file ] = readFileSync( this.file, { encoding: 'utf-8' });
