@@ -339,7 +339,6 @@ Node.prototype = {
 	load: function load ( sourcesContentByPath, sourceMapByPath ) {
 		var this$1 = this;
 
-		if ( !this.file ) return null;
 		return getContent( this, sourcesContentByPath ).then( function (content) {
 			this$1.content = sourcesContentByPath[ this$1.file ] = content;
 
@@ -371,7 +370,6 @@ Node.prototype = {
 	},
 
 	loadSync: function loadSync ( sourcesContentByPath, sourceMapByPath ) {
-		if ( !this.file ) { return null; }
 		if ( !this.content ) {
 			if ( !sourcesContentByPath[ this.file ] ) {
 				sourcesContentByPath[ this.file ] = sander.readFileSync( this.file, { encoding: 'utf-8' });
