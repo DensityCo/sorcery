@@ -349,7 +349,7 @@ Node.prototype = {
 				var sourceRoot = resolve( dirname( this$1.file ), map.sourceRoot || '' );
 
 				this$1.sources = map.sources.map( function ( source, i ) {
-					return !(typeof(source) === String && source.contains('webpack:/')) ?
+					return !(typeof(source) === String && source.toString().contains('webpack:/')) ?
 						new Node({
 							file: source ? resolve( sourceRoot, source ) : null,
 							content: sourcesContent[i]
@@ -387,7 +387,7 @@ Node.prototype = {
 			var sourceRoot = resolve( dirname( this.file ), map.sourceRoot || '' );
 
 			this.sources = map.sources.map( function ( source, i ) {
-				if (!(typeof(source) === String && source.contains('webpack:/'))) {
+				if (!(typeof(source) === String && source.toString().contains('webpack:/'))) {
 					var node = new Node({
 						file: resolve( sourceRoot, source ),
 						content: sourcesContent[i]
