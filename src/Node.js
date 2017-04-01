@@ -139,6 +139,7 @@ Node.prototype = {
 				if ( generatedCodeColumn > columnIndex ) {
 					break;
 				}
+
 				if ( generatedCodeColumn === columnIndex ) {
 					if ( segments[i].length < 4 ) return null;
 
@@ -148,8 +149,6 @@ Node.prototype = {
 					let nameIndex = segments[i][4];
 
 					let parent = this.sources[ sourceFileIndex ];
-
-					if (!parent.file) { parent.isOriginalSource = true; }
 					return parent.trace( sourceCodeLine, sourceCodeColumn, this.map.names[ nameIndex ] || name );
 				}
 			}

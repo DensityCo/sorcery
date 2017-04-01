@@ -36,9 +36,12 @@ export default function getMapFromUrl ( url, base, sync ) {
 
 	url = resolve( dirname( base ), decodeURI( url ) );
 
-	// Remove webpack prefixes
+	// Repair some URL issues we have at Density :[
 	if ( /webpack:\//.test( url ) ) {
 		url = url.replace('webpack:/', '');
+	}
+	if ( !/app.js$/.test( url ) ) {
+		url = url.replace('dist/', 'tmp/');
 	}
 
 	if ( sync ) {

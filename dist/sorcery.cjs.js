@@ -255,9 +255,12 @@ function getMapFromUrl ( url, base, sync ) {
 
 	url = path.resolve( path.dirname( base ), decodeURI( url ) );
 
-	// Remove webpack prefixes
+	// Repair some URL issues we have at Density :[
 	if ( /webpack:\//.test( url ) ) {
 		url = url.replace('webpack:/', '');
+	}
+	if ( !/app.js$/.test( url ) ) {
+		url = url.replace('dist/', 'tmp/');
 	}
 
 	if ( sync ) {
@@ -452,6 +455,7 @@ Node.prototype = {
 				if ( generatedCodeColumn > columnIndex ) {
 					break;
 				}
+
 				if ( generatedCodeColumn === columnIndex ) {
 					if ( segments[i].length < 4 ) return null;
 
@@ -461,8 +465,6 @@ Node.prototype = {
 					var nameIndex$1 = segments[i][4];
 
 					var parent$1 = this$1.sources[ sourceFileIndex$1 ];
-
-					if (!parent$1.file) { parent$1.isOriginalSource = true; }
 					return parent$1.trace( sourceCodeLine$1, sourceCodeColumn, this$1.map.names[ nameIndex$1 ] || name );
 				}
 			}
