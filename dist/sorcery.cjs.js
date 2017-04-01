@@ -256,6 +256,9 @@ function getMapFromUrl ( url, base, sync ) {
 	url = path.resolve( path.dirname( base ), decodeURI( url ) );
 
 	// Repair some URL issues we have at Density :[
+	if ( url.indexOf('webpack:/') > -1 ) {
+		url = url.replace('webpack:/', '');
+	}
 	if ( !/app\.js(\.map)?$/.test( url ) && url.indexOf('node_modules') < 0 ) {
 		url = url.replace('dist/', 'tmp/');
 	}
