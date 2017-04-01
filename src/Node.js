@@ -46,11 +46,13 @@ Node.prototype = {
 				const sourceRoot = resolve( dirname( this.file ), map.sourceRoot || '' );
 
 				this.sources = map.sources.map( ( source, i ) => {
-					return new Node({
-						file: source ? resolve( sourceRoot, source ) : null,
-						content: sourcesContent[i]
-					});
-				});
+					return sourcesContent[i].contains('webpack:/') ?
+						new Node({
+							file: source ? resolve( sourceRoot, source ) : null,
+							content: sourcesContent[i]
+						})
+						: null;
+				}).reduce((a, n) => { if (n) a.append(n); return a; }, []);
 
 				const promises = this.sources.map( node => node.load( sourcesContentByPath, sourceMapByPath ) );
 				return Promise.all( promises );
@@ -81,14 +83,16 @@ Node.prototype = {
 			const sourceRoot = resolve( dirname( this.file ), map.sourceRoot || '' );
 
 			this.sources = map.sources.map( ( source, i ) => {
-				const node = new Node({
-					file: resolve( sourceRoot, source ),
-					content: sourcesContent[i]
-				});
+				if (!sourcesContent[i].contains('webpack:/')) {
+					const node = new Node({
+						file: resolve( sourceRoot, source ),
+						content: sourcesContent[i]
+					});
 
-				node.loadSync( sourcesContentByPath, sourceMapByPath );
-				return node;
-			});
+					node.loadSync( sourcesContentByPath, sourceMapByPath );
+					return node;
+				}
+			}).reduce((a, n) => { if (n) a.append(n); return a; }, []);
 		}
 	},
 
