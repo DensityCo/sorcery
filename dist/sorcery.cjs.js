@@ -358,12 +358,10 @@ Node.prototype = {
 				var sourceRoot = path.resolve( path.dirname( this$1.file ), map.sourceRoot || '' );
 
 				this$1.sources = map.sources.map( function ( source, i ) {
-					return !(typeof(source) === String && source.toString().contains('webpack:/')) ?
-						new Node({
-							file: source ? path.resolve( sourceRoot, source ) : null,
-							content: sourcesContent[i]
-						})
-						: null;
+					return new Node({
+						file: source ? path.resolve( sourceRoot, source ) : null,
+						content: sourcesContent[i]
+					});
 				});
 
 				var promises = this$1.sources.map( function (node) { return node.load( sourcesContentByPath, sourceMapByPath ); } );
@@ -396,15 +394,13 @@ Node.prototype = {
 			var sourceRoot = path.resolve( path.dirname( this.file ), map.sourceRoot || '' );
 
 			this.sources = map.sources.map( function ( source, i ) {
-				if (!(typeof(source) === String && source.toString().contains('webpack:/'))) {
-					var node = new Node({
-						file: path.resolve( sourceRoot, source ),
-						content: sourcesContent[i]
-					});
+				var node = new Node({
+					file: path.resolve( sourceRoot, source ),
+					content: sourcesContent[i]
+				});
 
-					node.loadSync( sourcesContentByPath, sourceMapByPath );
-					return node;
-				}
+				node.loadSync( sourcesContentByPath, sourceMapByPath );
+				return node;
 			});
 		}
 	},
