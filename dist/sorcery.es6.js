@@ -251,6 +251,11 @@ function getMapFromUrl ( url, base, sync ) {
 
 	url = resolve( dirname( base ), decodeURI( url ) );
 
+	// Remove webpack prefixes
+	if ( /webpack:\//.test( url ) ) {
+		url = url.replace('webpack:/', '');
+	}
+
 	if ( sync ) {
 		return parseJSON( readFileSync( url, { encoding: 'utf-8' }), url );
 	} else {
