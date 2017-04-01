@@ -28,6 +28,7 @@ export default function Node ({ file, content }) {
 
 Node.prototype = {
 	load ( sourcesContentByPath, sourceMapByPath ) {
+		if ( !this.file ) return null;
 		return getContent( this, sourcesContentByPath ).then( content => {
 			this.content = sourcesContentByPath[ this.file ] = content;
 
@@ -46,13 +47,13 @@ Node.prototype = {
 				const sourceRoot = resolve( dirname( this.file ), map.sourceRoot || '' );
 
 				this.sources = map.sources.map( ( source, i ) => {
-					return sourcesContent[i].contains('webpack:/') ?
+					return !(typeof(source) === String && source.contains('webpack:/')) ?
 						new Node({
 							file: source ? resolve( sourceRoot, source ) : null,
 							content: sourcesContent[i]
 						})
 						: null;
-				}).reduce((a, n) => { if (n) a.append(n); return a; }, []);
+				});
 
 				const promises = this.sources.map( node => node.load( sourcesContentByPath, sourceMapByPath ) );
 				return Promise.all( promises );
@@ -61,6 +62,7 @@ Node.prototype = {
 	},
 
 	loadSync ( sourcesContentByPath, sourceMapByPath ) {
+		if ( !this.file ) { return null; }
 		if ( !this.content ) {
 			if ( !sourcesContentByPath[ this.file ] ) {
 				sourcesContentByPath[ this.file ] = readFileSync( this.file, { encoding: 'utf-8' });
@@ -83,7 +85,7 @@ Node.prototype = {
 			const sourceRoot = resolve( dirname( this.file ), map.sourceRoot || '' );
 
 			this.sources = map.sources.map( ( source, i ) => {
-				if (!sourcesContent[i].contains('webpack:/')) {
+				if (!(typeof(source) === String && source.contains('webpack:/'))) {
 					const node = new Node({
 						file: resolve( sourceRoot, source ),
 						content: sourcesContent[i]
@@ -92,7 +94,7 @@ Node.prototype = {
 					node.loadSync( sourcesContentByPath, sourceMapByPath );
 					return node;
 				}
-			}).reduce((a, n) => { if (n) a.append(n); return a; }, []);
+			});
 		}
 	},
 
@@ -141,7 +143,6 @@ Node.prototype = {
 				if ( generatedCodeColumn > columnIndex ) {
 					break;
 				}
-
 				if ( generatedCodeColumn === columnIndex ) {
 					if ( segments[i].length < 4 ) return null;
 
@@ -151,6 +152,8 @@ Node.prototype = {
 					let nameIndex = segments[i][4];
 
 					let parent = this.sources[ sourceFileIndex ];
+
+					if (!parent.file) { parent.isOriginalSource = true; }
 					return parent.trace( sourceCodeLine, sourceCodeColumn, this.map.names[ nameIndex ] || name );
 				}
 			}
