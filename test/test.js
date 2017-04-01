@@ -122,7 +122,7 @@ console.log "the answer is #{answer}"`
 				assert.strictEqual( actual.line, 2 );
 				assert.strictEqual( actual.column, 8 );
 				assert.strictEqual( actual.name, null );
-				assert.ok( /app\.js$/.test( actual.source || 'app.js' ) );
+				assert.ok( /app\.js$/.test( actual.source ) );
 			});
 		});
 
