@@ -757,7 +757,7 @@ function init ( file, options ) {
 	var sourceMapByPath = {};
 
 	if ( options.urlMiddleware ) {
-		middleware$1.addMiddleware('url', urlMiddleware);
+		middleware$1.addMiddleware('url', options.urlMiddleware);
 	}
 
 	if ( options.content ) {

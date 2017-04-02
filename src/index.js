@@ -24,7 +24,7 @@ function init ( file, options = {} ) {
 	let sourceMapByPath = {};
 
 	if ( options.urlMiddleware ) {
-		middleware.addMiddleware('url', urlMiddleware);
+		middleware.addMiddleware('url', options.urlMiddleware);
 	}
 
 	if ( options.content ) {
