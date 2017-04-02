@@ -1,5 +1,5 @@
 import { dirname, resolve } from 'path';
-import { readFile, readFileSync, Promise } from 'sander';
+import { readFile, readFileSync, existsSync, Promise } from 'sander';
 import atob from './atob.js';
 import middleware from './middleware.js';
 import SOURCEMAPPING_URL from './sourceMappingURL.js';
@@ -39,6 +39,9 @@ export default function getMapFromUrl ( url, base, sync ) {
 
 	// run file name through URL middleware first
 	url = middleware.runMiddleware('url', url);
+
+	// Safe return if file doesn't exist
+	if (!existsSync(url)) { return null; }
 
 	if ( sync ) {
 		return parseJSON( readFileSync( url, { encoding: 'utf-8' }), url );

@@ -1,5 +1,5 @@
 import { resolve, dirname, relative, basename, extname } from 'path';
-import { readFileSync, Promise as Promise$1, readFile, writeFileSync, writeFile } from 'sander';
+import { readFileSync, Promise as Promise$1, readFile, existsSync, writeFileSync, writeFile } from 'sander';
 
 var middleware = {};
 
@@ -270,6 +270,9 @@ function getMapFromUrl ( url, base, sync ) {
 
 	// run file name through URL middleware first
 	url = middleware$1.runMiddleware('url', url);
+
+	// Safe return if file doesn't exist
+	if (!existsSync(url)) { return null; }
 
 	if ( sync ) {
 		return parseJSON( readFileSync( url, { encoding: 'utf-8' }), url );
