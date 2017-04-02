@@ -9,7 +9,7 @@ var middleware = {};
 
 var addMiddleware = function (type, callback) {
   middleware[type] = middleware[type] || [];
-  middlware[type].push(callback);
+  middleware[type].push(callback);
 }
 
 var runMiddleware = function (type, input) {
