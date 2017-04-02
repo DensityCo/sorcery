@@ -4,8 +4,8 @@ import { readFileSync, Promise as Promise$1, readFile, writeFileSync, writeFile 
 var middleware = {};
 
 var addMiddleware = function (type, callback) {
-  var chain = middleware[type] || [];
-  chain.push(callback);
+  middleware[type] = middleware[type] || [];
+  middlware[type].push(callback);
 }
 
 var runMiddleware = function (type, input) {
