@@ -1,6 +1,7 @@
 import { dirname, resolve } from 'path';
 import { readFile, readFileSync, Promise } from 'sander';
 import atob from './atob.js';
+import middleware from './middleware.js';
 import SOURCEMAPPING_URL from './sourceMappingURL.js';
 
 function parseJSON ( json, url ) {
@@ -36,13 +37,8 @@ export default function getMapFromUrl ( url, base, sync ) {
 
 	url = resolve( dirname( base ), decodeURI( url ) );
 
-	// Repair some URL issues we have at Density :[
-	if ( url.indexOf('webpack:/') > -1 ) {
-		url = url.replace('webpack:/', '');
-	}
-	if ( !/app\.js(\.map)?$/.test( url ) && url.indexOf('node_modules') < 0 ) {
-		url = url.replace('dist/', 'tmp/');
-	}
+	// run file name through URL middleware first
+	url = middleware.runMiddleware('url');
 
 	if ( sync ) {
 		return parseJSON( readFileSync( url, { encoding: 'utf-8' }), url );

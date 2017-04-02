@@ -1,6 +1,23 @@
 import { resolve, dirname, relative, basename, extname } from 'path';
 import { readFileSync, Promise as Promise$1, readFile, writeFileSync, writeFile } from 'sander';
 
+var middleware = {};
+
+var addMiddleware = function (type, callback) {
+  var chain = middleware[type] || [];
+  chain.push(callback);
+}
+
+var runMiddleware = function (type, input) {
+  var chain = middleware[type] || [];
+  return chain.reduce(function (a, n) { return n(a); }, input);
+}
+
+var middleware$1 = {
+  addMiddleware: addMiddleware,
+  runMiddleware: runMiddleware
+}
+
 var charToInteger = {};
 var integerToChar = {};
 
@@ -251,13 +268,8 @@ function getMapFromUrl ( url, base, sync ) {
 
 	url = resolve( dirname( base ), decodeURI( url ) );
 
-	// Repair some URL issues we have at Density :[
-	if ( url.indexOf('webpack:/') > -1 ) {
-		url = url.replace('webpack:/', '');
-	}
-	if ( !/app\.js(\.map)?$/.test( url ) && url.indexOf('node_modules') < 0 ) {
-		url = url.replace('dist/', 'tmp/');
-	}
+	// run file name through URL middleware first
+	url = middleware$1.runMiddleware('url');
 
 	if ( sync ) {
 		return parseJSON( readFileSync( url, { encoding: 'utf-8' }), url );
@@ -312,6 +324,10 @@ function Node (ref) {
 	var file = ref.file;
 	var content = ref.content;
 
+
+	// run file name through URL middleware first
+	file = middleware$1.runMiddleware('url', file);
+	
 	this.file = file ? resolve( file ) : null;
 	this.content = content || null; // sometimes exists in sourcesContent, sometimes doesn't
 
@@ -739,6 +755,10 @@ function init ( file, options ) {
 
 	var sourcesContentByPath = {};
 	var sourceMapByPath = {};
+
+	if ( options.urlMiddleware ) {
+		middleware$1.addMiddleware('url', urlMiddleware);
+	}
 
 	if ( options.content ) {
 		Object.keys( options.content ).forEach( function (key) {

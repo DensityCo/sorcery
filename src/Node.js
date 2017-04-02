@@ -1,9 +1,14 @@
 import { dirname, resolve } from 'path';
 import { readFile, readFileSync, Promise } from 'sander';
 import { decode } from 'sourcemap-codec';
+import middleware from './utils/middleware.js';
 import getMap from './utils/getMap.js';
 
 export default function Node ({ file, content }) {
+
+	// run file name through URL middleware first
+	file = middleware.runMiddleware('url', file);
+	
 	this.file = file ? resolve( file ) : null;
 	this.content = content || null; // sometimes exists in sourcesContent, sometimes doesn't
 

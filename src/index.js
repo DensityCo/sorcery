@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import middleware from './utils/middleware.js';
 import Node from './Node.js';
 import Chain from './Chain.js';
 
@@ -21,6 +22,10 @@ function init ( file, options = {} ) {
 
 	let sourcesContentByPath = {};
 	let sourceMapByPath = {};
+
+	if ( options.urlMiddleware ) {
+		middleware.addMiddleware('url', urlMiddleware);
+	}
 
 	if ( options.content ) {
 		Object.keys( options.content ).forEach( key => {
