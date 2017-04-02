@@ -37,28 +37,31 @@ Node.prototype = {
 			this.content = sourcesContentByPath[ this.file ] = content;
 
 			return getMap( this, sourceMapByPath ).then( map => {
-				if ( !map ) return null;
+				if ( !map ) {
+					this.isOriginalSource = true;
+					return null;
+				} else {
+					this.map = map;
 
-				this.map = map;
+					let decodingStart = process.hrtime();
+					this.mappings = decode( map.mappings );
+					let decodingTime = process.hrtime( decodingStart );
+					this._stats.decodingTime = 1e9 * decodingTime[0] + decodingTime[1];
 
-				let decodingStart = process.hrtime();
-				this.mappings = decode( map.mappings );
-				let decodingTime = process.hrtime( decodingStart );
-				this._stats.decodingTime = 1e9 * decodingTime[0] + decodingTime[1];
+					const sourcesContent = map.sourcesContent || [];
 
-				const sourcesContent = map.sourcesContent || [];
+					const sourceRoot = resolve( dirname( this.file ), map.sourceRoot || '' );
 
-				const sourceRoot = resolve( dirname( this.file ), map.sourceRoot || '' );
-
-				this.sources = map.sources.map( ( source, i ) => {
-					return new Node({
-						file: source ? resolve( sourceRoot, source ) : null,
-						content: sourcesContent[i]
+					this.sources = map.sources.map( ( source, i ) => {
+						return new Node({
+							file: source ? resolve( sourceRoot, source ) : null,
+							content: sourcesContent[i]
+						});
 					});
-				});
 
-				const promises = this.sources.map( node => node.load( sourcesContentByPath, sourceMapByPath ) );
-				return Promise.all( promises );
+					const promises = this.sources.map( node => node.load( sourcesContentByPath, sourceMapByPath ) );
+					return Promise.all( promises );
+				}
 			});
 		});
 	},
@@ -77,6 +80,7 @@ Node.prototype = {
 
 		if ( !map ) {
 			this.isOriginalSource = true;
+			return null;
 		} else {
 			this.map = map;
 			this.mappings = decode( map.mappings );

@@ -3,3 +3,5 @@ node_modules
 cli-test
 .tmp
 coverage
+
+npm-debug.log

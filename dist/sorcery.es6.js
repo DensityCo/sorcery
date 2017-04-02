@@ -315,7 +315,6 @@ function getMap ( node, sourceMapByPath, sync ) {
 		var url = getSourceMappingUrl( node.content );
 
 		if ( !url ) {
-			node.isOriginalSource = true;
 			return sync ? null : Promise$1.resolve( null );
 		}
 
@@ -361,28 +360,31 @@ Node.prototype = {
 			this$1.content = sourcesContentByPath[ this$1.file ] = content;
 
 			return getMap( this$1, sourceMapByPath ).then( function (map) {
-				if ( !map ) return null;
+				if ( !map ) {
+					this$1.isOriginalSource = true;
+					return null;
+				} else {
+					this$1.map = map;
 
-				this$1.map = map;
+					var decodingStart = process.hrtime();
+					this$1.mappings = decode( map.mappings );
+					var decodingTime = process.hrtime( decodingStart );
+					this$1._stats.decodingTime = 1e9 * decodingTime[0] + decodingTime[1];
 
-				var decodingStart = process.hrtime();
-				this$1.mappings = decode( map.mappings );
-				var decodingTime = process.hrtime( decodingStart );
-				this$1._stats.decodingTime = 1e9 * decodingTime[0] + decodingTime[1];
+					var sourcesContent = map.sourcesContent || [];
 
-				var sourcesContent = map.sourcesContent || [];
+					var sourceRoot = resolve( dirname( this$1.file ), map.sourceRoot || '' );
 
-				var sourceRoot = resolve( dirname( this$1.file ), map.sourceRoot || '' );
-
-				this$1.sources = map.sources.map( function ( source, i ) {
-					return new Node({
-						file: source ? resolve( sourceRoot, source ) : null,
-						content: sourcesContent[i]
+					this$1.sources = map.sources.map( function ( source, i ) {
+						return new Node({
+							file: source ? resolve( sourceRoot, source ) : null,
+							content: sourcesContent[i]
+						});
 					});
-				});
 
-				var promises = this$1.sources.map( function (node) { return node.load( sourcesContentByPath, sourceMapByPath ); } );
-				return Promise$1.all( promises );
+					var promises = this$1.sources.map( function (node) { return node.load( sourcesContentByPath, sourceMapByPath ); } );
+					return Promise$1.all( promises );
+				}
 			});
 		});
 	},
@@ -401,6 +403,7 @@ Node.prototype = {
 
 		if ( !map ) {
 			this.isOriginalSource = true;
+			return null;
 		} else {
 			this.map = map;
 			this.mappings = decode( map.mappings );
