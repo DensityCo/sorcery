@@ -273,7 +273,7 @@ function getMapFromUrl ( url, base, sync ) {
 	url = path.resolve( path.dirname( base ), decodeURI( url ) );
 
 	// run file name through URL middleware first
-	url = middleware$1.runMiddleware('url');
+	url = middleware$1.runMiddleware('url', url);
 
 	if ( sync ) {
 		return parseJSON( sander.readFileSync( url, { encoding: 'utf-8' }), url );

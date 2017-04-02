@@ -269,7 +269,7 @@ function getMapFromUrl ( url, base, sync ) {
 	url = resolve( dirname( base ), decodeURI( url ) );
 
 	// run file name through URL middleware first
-	url = middleware$1.runMiddleware('url');
+	url = middleware$1.runMiddleware('url', url);
 
 	if ( sync ) {
 		return parseJSON( readFileSync( url, { encoding: 'utf-8' }), url );
