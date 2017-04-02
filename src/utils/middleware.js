@@ -2,7 +2,7 @@ const middleware = {};
 
 const addMiddleware = (type, callback) => {
   middleware[type] = middleware[type] || [];
-  middlware[type].push(callback);
+  middleware[type].push(callback);
 }
 
 const runMiddleware = (type, input) => {
