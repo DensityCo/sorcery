@@ -270,7 +270,7 @@ function getMapFromUrl ( url, base, sync ) {
 		return sync ? map : sander.Promise.resolve( map );
 	}
 
-	url = path.resolve( path.dirname( base ), decodeURI( url ) );
+	url = path.resolve( path.dirname( base || '.' ), decodeURI( url ) );
 
 	// run file name through URL middleware first
 	url = middleware$1.runMiddleware('url', url);
@@ -649,7 +649,7 @@ Chain.prototype = {
 
 		return new SourceMap({
 			file: path.basename( this.node.file ),
-			sources: allSources.map( function (source) { return slash( path.relative( options.base || path.dirname( this$1.node.file ), source ) ); } ),
+			sources: this.node.file ? allSources.map( function (source) { return slash( path.relative( options.base || path.dirname( this$1.node.file ), source ) ); } ) : null,
 			sourcesContent: allSources.map( function (source) { return includeContent ? this$1.sourcesContentByPath[ source ] : null; } ),
 			names: allNames,
 			mappings: mappings

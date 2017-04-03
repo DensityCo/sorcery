@@ -266,7 +266,7 @@ function getMapFromUrl ( url, base, sync ) {
 		return sync ? map : Promise$1.resolve( map );
 	}
 
-	url = resolve( dirname( base ), decodeURI( url ) );
+	url = resolve( dirname( base || '.' ), decodeURI( url ) );
 
 	// run file name through URL middleware first
 	url = middleware$1.runMiddleware('url', url);
@@ -645,7 +645,7 @@ Chain.prototype = {
 
 		return new SourceMap({
 			file: basename( this.node.file ),
-			sources: allSources.map( function (source) { return slash( relative( options.base || dirname( this$1.node.file ), source ) ); } ),
+			sources: this.node.file ? allSources.map( function (source) { return slash( relative( options.base || dirname( this$1.node.file ), source ) ); } ) : null,
 			sourcesContent: allSources.map( function (source) { return includeContent ? this$1.sourcesContentByPath[ source ] : null; } ),
 			names: allNames,
 			mappings: mappings

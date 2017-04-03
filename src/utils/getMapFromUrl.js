@@ -35,7 +35,7 @@ export default function getMapFromUrl ( url, base, sync ) {
 		return sync ? map : Promise.resolve( map );
 	}
 
-	url = resolve( dirname( base ), decodeURI( url ) );
+	url = resolve( dirname( base || '.' ), decodeURI( url ) );
 
 	// run file name through URL middleware first
 	url = middleware.runMiddleware('url', url);
