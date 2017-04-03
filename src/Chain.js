@@ -104,7 +104,7 @@ Chain.prototype = {
 
 		return new SourceMap({
 			file: basename( this.node.file ),
-			sources: this.node.file ? allSources.map( source => slash( relative( options.base || dirname( this.node.file ), source ) ) ) : null,
+			sources: allSources.map( source => source ? slash( relative( options.base || dirname( this.node.file ), source ) ) : null ),
 			sourcesContent: allSources.map( source => includeContent ? this.sourcesContentByPath[ source ] : null ),
 			names: allNames,
 			mappings

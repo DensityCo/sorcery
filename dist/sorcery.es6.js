@@ -645,7 +645,7 @@ Chain.prototype = {
 
 		return new SourceMap({
 			file: basename( this.node.file ),
-			sources: this.node.file ? allSources.map( function (source) { return slash( relative( options.base || dirname( this$1.node.file ), source ) ); } ) : null,
+			sources: allSources.map( function (source) { return source ? slash( relative( options.base || dirname( this$1.node.file ), source ) ) : null; } ),
 			sourcesContent: allSources.map( function (source) { return includeContent ? this$1.sourcesContentByPath[ source ] : null; } ),
 			names: allNames,
 			mappings: mappings
