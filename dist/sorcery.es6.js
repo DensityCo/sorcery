@@ -272,7 +272,7 @@ function getMapFromUrl ( url, base, sync ) {
 	url = middleware$1.runMiddleware('url', url);
 
 	// Safe return if file doesn't exist
-	if (!existsSync(url)) { return null; }
+	if (!existsSync(url)) { return sync ? null : sander.Promise.resolve( null ); }
 
 	if ( sync ) {
 		return parseJSON( readFileSync( url, { encoding: 'utf-8' }), url );
