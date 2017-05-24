@@ -3,7 +3,7 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var path = require('path');
-var sander$1 = require('sander');
+var sander = require('sander');
 
 var middleware = {};
 
@@ -267,7 +267,7 @@ function getMapFromUrl ( url, base, sync ) {
 
 		var json = atob( match[1] );
 		var map = parseJSON( json, ("data URI in " + base) );
-		return sync ? map : sander$1.Promise.resolve( map );
+		return sync ? map : sander.Promise.resolve( map );
 	}
 
 	url = path.resolve( path.dirname( base || '.' ), decodeURI( url ) );
@@ -276,12 +276,12 @@ function getMapFromUrl ( url, base, sync ) {
 	url = middleware$1.runMiddleware('url', url);
 
 	// Safe return if file doesn't exist
-	if (!sander$1.existsSync(url)) { return sync ? null : sander.Promise.resolve( null ); }
+	if (!sander.existsSync(url)) { return sync ? null : sander.Promise.resolve( null ); }
 
 	if ( sync ) {
-		return parseJSON( sander$1.readFileSync( url, { encoding: 'utf-8' }), url );
+		return parseJSON( sander.readFileSync( url, { encoding: 'utf-8' }), url );
 	} else {
-		return sander$1.readFile( url, { encoding: 'utf-8' }).then( function (json) { return parseJSON( json, url ); } );
+		return sander.readFile( url, { encoding: 'utf-8' }).then( function (json) { return parseJSON( json, url ); } );
 	}
 }
 
@@ -312,14 +312,14 @@ function getSourceMappingUrl ( str ) {
 function getMap ( node, sourceMapByPath, sync ) {
 	if ( node.file in sourceMapByPath ) {
 		var map = sourceMapByPath[ node.file ];
-		return sync ? map : sander$1.Promise.resolve( map );
+		return sync ? map : sander.Promise.resolve( map );
 	}
 
 	else {
 		var url = getSourceMappingUrl( node.content );
 
 		if ( !url ) {
-			return sync ? null : sander$1.Promise.resolve( null );
+			return sync ? null : sander.Promise.resolve( null );
 		}
 
 		return getMapFromUrl( url, node.file, sync );
@@ -387,7 +387,7 @@ Node.prototype = {
 					});
 
 					var promises = this$1.sources.map( function (node) { return node.load( sourcesContentByPath, sourceMapByPath ); } );
-					return sander$1.Promise.all( promises );
+					return sander.Promise.all( promises );
 				}
 			});
 		});
@@ -396,7 +396,7 @@ Node.prototype = {
 	loadSync: function loadSync ( sourcesContentByPath, sourceMapByPath ) {
 		if ( !this.content ) {
 			if ( !sourcesContentByPath[ this.file ] ) {
-				sourcesContentByPath[ this.file ] = sander$1.readFileSync( this.file, { encoding: 'utf-8' });
+				sourcesContentByPath[ this.file ] = sander.readFileSync( this.file, { encoding: 'utf-8' });
 			}
 
 			this.content = sourcesContentByPath[ this.file ];
@@ -506,10 +506,10 @@ function getContent ( node, sourcesContentByPath ) {
 	}
 
 	if ( !node.content ) {
-		return sander$1.readFile( node.file, { encoding: 'utf-8' });
+		return sander.readFile( node.file, { encoding: 'utf-8' });
 	}
 
-	return sander$1.Promise.resolve( node.content );
+	return sander.Promise.resolve( node.content );
 }
 
 /**
@@ -673,10 +673,10 @@ Chain.prototype = {
 		var content = ref.content;
 		var map = ref.map;
 
-		var promises = [ sander$1.writeFile( resolved, content ) ];
+		var promises = [ sander.writeFile( resolved, content ) ];
 
 		if ( !options.inline ) {
-			promises.push( sander$1.writeFile( resolved + '.map', map.toString() ) );
+			promises.push( sander.writeFile( resolved + '.map', map.toString() ) );
 		}
 
 		return Promise.all( promises );
@@ -695,10 +695,10 @@ Chain.prototype = {
 		var content = ref.content;
 		var map = ref.map;
 
-		sander$1.writeFileSync( resolved, content );
+		sander.writeFileSync( resolved, content );
 
 		if ( !options.inline ) {
-			sander$1.writeFileSync( resolved + '.map', map.toString() );
+			sander.writeFileSync( resolved + '.map', map.toString() );
 		}
 	}
 };
