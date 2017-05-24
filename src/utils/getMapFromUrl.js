@@ -41,7 +41,7 @@ export default function getMapFromUrl ( url, base, sync ) {
 	url = middleware.runMiddleware('url', url);
 
 	// Safe return if file doesn't exist
-	if (!existsSync(url)) { return sync ? null : sander.Promise.resolve( null ); }
+	if (!existsSync(url)) { return sync ? null : Promise.resolve( null ); }
 
 	if ( sync ) {
 		return parseJSON( readFileSync( url, { encoding: 'utf-8' }), url );
